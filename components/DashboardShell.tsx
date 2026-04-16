@@ -2,24 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Users, Calendar, Heart, Shield, LogOut, 
-  Target, BookOpen, ChevronRight, Home, Church, FileText,
-  Menu, X, Library, Activity, Bell, Star,
-  BarChart3, MessageCircle, Sparkles, Crown,
-  ClipboardCheck, Image, Clock, Globe, Book
+  Users, Calendar, Heart, Shield, LogOut, UserSwitch,
+  Target, BookOpen, ChevronRight, Home, Church,
+  Menu, X, Library, Bell, Star,
+  BarChart3, Image, Clock, Globe, Power,
+  UserCircle, Settings
 } from "lucide-react";
 import Logo from "./Logo";
-
-interface NavItem {
-  label: string;
-  icon: React.ElementType;
-  path: string;
-  roles?: string[];
-}
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -30,9 +23,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
   const groupId = (params?.groupId as string) || session?.user?.groupId || "1";
   const userRole = session?.user?.role || "member";
+  const userName = session?.user?.name || "User";
 
   useEffect(() => {
     setMounted(true);
@@ -53,59 +48,61 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     return roles.includes(userRole);
   };
 
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/login' });
+  };
+
+  const handleSwitchUser = async () => {
+    await signOut({ callbackUrl: '/login' });
+  };
+
   const navSections = [
     {
-      title: "Main",
+      title: "MAIN",
       items: [
-        { label: 'Group Home', icon: Home, path: `/group/${groupId}`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'GROUP HOME', icon: Home, path: `/group/${groupId}`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     },
     {
-      title: "Meetings",
+      title: "MEETINGS",
       items: [
-        { label: 'Live Session', icon: Bell, path: `/group/${groupId}/live-session`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Attendance', icon: Clock, path: `/group/${groupId}/attendance`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Calendar', icon: Calendar, path: `/group/${groupId}/calendar`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Gallery', icon: Image, path: `/group/${groupId}/gallery`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'LIVE SESSION', icon: Bell, path: `/group/${groupId}/live-session`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'ATTENDANCE', icon: Clock, path: `/group/${groupId}/attendance`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'CALENDAR', icon: Calendar, path: `/group/${groupId}/calendar`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'GALLERY', icon: Image, path: `/group/${groupId}/gallery`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     },
     {
-      title: "Ministry",
+      title: "MINISTRY",
       items: [
-        { label: 'Leadership Hub', icon: Shield, path: `/group/${groupId}/leadership-hub`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Mission Journey', icon: Target, path: `/group/${groupId}/mission`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Prayer Book', icon: Heart, path: `/group/${groupId}/prayer-book`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'LEADERSHIP HUB', icon: Shield, path: `/group/${groupId}/leadership-hub`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'MISSION JOURNEY', icon: Target, path: `/group/${groupId}/mission`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'PRAYER BOOK', icon: Heart, path: `/group/${groupId}/prayer-book`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     },
     {
-      title: "Learning",
+      title: "LEARNING",
       items: [
-        { label: 'Study Hub', icon: BookOpen, path: `/group/${groupId}/study-hub`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Study 101', icon: Book, path: `/group/${groupId}/study-101`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Resources', icon: Library, path: `/group/${groupId}/resources`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'STUDY HUB', icon: BookOpen, path: `/group/${groupId}/study-hub`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'STUDY 101', icon: BookOpen, path: `/group/${groupId}/study-101`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'RESOURCES', icon: Library, path: `/group/${groupId}/resources`, roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     },
     {
-      title: "Management",
+      title: "MANAGEMENT",
       items: [
-        { label: 'Core Team', icon: Users, path: `/group/${groupId}/team`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Reports', icon: BarChart3, path: `/group/${groupId}/reports`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'CORE TEAM', icon: Users, path: `/group/${groupId}/team`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'REPORTS', icon: BarChart3, path: `/group/${groupId}/reports`, roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     },
     {
-      title: "Global",
+      title: "GLOBAL",
       items: [
-        { label: 'Portal Home', icon: Globe, path: '/portal', roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'All Groups', icon: Church, path: '/groups', roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
-        { label: 'Health & Safety', icon: ClipboardCheck, path: '/safety', roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'PORTAL HOME', icon: Globe, path: '/portal', roles: ['MEMBER', 'COORDINATOR', 'PASTOR', 'ADMIN'] },
+        { label: 'ALL GROUPS', icon: Church, path: '/groups', roles: ['COORDINATOR', 'PASTOR', 'ADMIN'] },
       ]
     }
   ];
-
-  const handleLogout = () => {
-    // This will be handled by next-auth signOut
-    window.location.href = '/api/auth/signout';
-  };
 
   const getRoleBadgeColor = () => {
     switch(userRole) {
@@ -136,14 +133,53 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       </div>
       
       {session?.user && (
-        <div className="px-5 py-4 border-b border-gray-200">
-          <p className="text-[9px] font-black text-[#547189] uppercase tracking-widest">Authorized Access</p>
-          <p className="font-black text-sm text-gray-900 mt-1 truncate">{session.user.name}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <span className={`text-[8px] font-black px-2 py-0.5 rounded-full ${getRoleBadgeColor()} uppercase`}>
-              {userRole}
-            </span>
+        <div className="px-5 py-4 border-b border-gray-200 relative">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[9px] font-black text-[#547189] uppercase tracking-widest">AUTHORIZED ACCESS</p>
+              <p className="font-black text-sm text-gray-900 mt-1 truncate">{userName}</p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className={`text-[8px] font-black px-2 py-0.5 rounded-full ${getRoleBadgeColor()} uppercase`}>
+                  {userRole}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              <UserCircle size={20} className="text-gray-500" />
+            </button>
           </div>
+          
+          {/* User Menu Dropdown */}
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50"
+              >
+                <div className="p-2">
+                  <button
+                    onClick={handleSwitchUser}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <UserSwitch size={16} />
+                    <span>Switch User</span>
+                  </button>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Power size={16} />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
       
@@ -164,14 +200,14 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                     className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
                       isActive 
                         ? 'bg-[#547189] text-white shadow-lg' 
-                        : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <Icon size={16} />
-                      <span>{item.label}</span>
+                      <Icon size={16} className={isActive ? 'text-white' : 'text-gray-500'} />
+                      <span className={isActive ? 'text-white' : 'text-gray-700'}>{item.label}</span>
                     </div>
-                    {isActive && <ChevronRight size={14} />}
+                    {isActive && <ChevronRight size={14} className="text-white" />}
                   </button>
                 );
               })}
@@ -180,12 +216,13 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         })}
       </nav>
       
-      <div className="p-5 border-t border-gray-200 bg-gray-50">
+      {/* Sign Out Button at Bottom (visible on mobile) */}
+      <div className="p-5 border-t border-gray-200 bg-gray-50 lg:hidden">
         <button 
-          onClick={handleLogout} 
+          onClick={handleSignOut} 
           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-[9px] uppercase text-white bg-[#C8102E] shadow-lg hover:brightness-110 transition-all active:scale-95"
         >
-          <LogOut size={14} /> Sign Out
+          <LogOut size={14} /> SIGN OUT
         </button>
         <p className="text-[7px] font-black text-gray-400 text-center mt-3 uppercase tracking-widest">
           Bethel Willenhall • v3.0
@@ -201,9 +238,17 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         scrolled ? 'bg-white/80 backdrop-blur-lg shadow-sm' : 'bg-transparent'
       }`}>
         <Logo className="h-10 w-auto" />
-        <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 bg-[#547189] text-white rounded-xl shadow-md">
-          <Menu size={20} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSignOut}
+            className="p-2 bg-red-500 text-white rounded-xl shadow-md"
+          >
+            <LogOut size={18} />
+          </button>
+          <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 bg-[#547189] text-white rounded-xl shadow-md">
+            <Menu size={20} />
+          </button>
+        </div>
       </div>
       
       {/* Desktop Sidebar */}
