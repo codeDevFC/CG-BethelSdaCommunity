@@ -6,16 +6,12 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
-      credentials: { 
-        username: { label: "Username" }, 
-        password: { label: "Password" } 
-      },
+      credentials: { username: { label: "Username" }, password: { label: "Password" } },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
           throw new Error("Missing credentials");
         }
 
-        // Find user in fallback users
         const user = FALLBACK_USERS.find(
           u => u.username.toLowerCase() === credentials.username.toLowerCase()
         );
@@ -24,12 +20,9 @@ export const authOptions = {
           throw new Error("User not found");
         }
 
-        // Simple password comparison (plain text for now)
         if (credentials.password !== user.password) {
           throw new Error("Invalid password");
         }
-
-        console.log("✅ Login successful:", { username: user.username, role: user.role });
 
         return { 
           id: user.id, 
@@ -42,10 +35,7 @@ export const authOptions = {
       },
     }),
   ],
-  session: { 
-    strategy: "jwt", 
-    maxAge: 8 * 60 * 60 
-  },
+  session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) { 
@@ -66,10 +56,7 @@ export const authOptions = {
       return session;
     },
   },
-  pages: { 
-    signIn: "/login", 
-    error: "/login" 
-  },
+  pages: { signIn: "/login", error: "/login" },
   secret: process.env.NEXTAUTH_SECRET || "bethel-secret-key-2026",
   trustHost: true,
 };
