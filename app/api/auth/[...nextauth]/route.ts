@@ -1,21 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-
-// Mock users for build time
-const mockUsers = [
-  { id: "1", username: "admin", passwordHash: "$2b$10$4DFJXrJGp4Am7vM0mf1BGeI2t6bPEZNAyCKvRN20eqlOJKZa1B5K2", name: "System Administrator", role: "ADMIN", isActive: true }
-];
-
-let prisma: any = null;
-
-// Try to import prisma dynamically
-try {
-  const { prisma: prismaClient } = await import("@/lib/prisma");
-  prisma = prismaClient;
-} catch (error) {
-  console.log("Prisma not available, using mock data");
-}
+import { prisma } from "@/lib/prisma";
 
 export const authOptions = {
   providers: [
@@ -23,35 +9,31 @@ export const authOptions = {
       name: "credentials",
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
-        groupId: { label: "Group ID", type: "text" }
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
-          throw new Error("Missing credentials");
+          throw new Error("Please enter your username and password");
         }
 
-        let user = null;
-        
-        // Try to get user from database
-        if (prisma) {
-          user = await prisma.user.findUnique({
-            where: { username: credentials.username },
-          });
-        } else {
-          // Use mock user for build
-          user = mockUsers.find(u => u.username === credentials.username);
-        }
+        // 1. Find user in Neon Database
+        const user = await prisma.user.findUnique({
+          where: { username: credentials.username },
+        });
 
+        // 2. Validate User
         if (!user || !user.isActive) {
-          throw new Error("User not found");
+          throw new Error("User not found or inactive");
         }
 
+        // 3. Check Password (admin@Bwcg777)
         const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        
         if (!isValid) {
           throw new Error("Invalid password");
         }
 
+        // 4. Return user object to session
         return {
           id: user.id,
           name: user.name,
@@ -65,7 +47,7 @@ export const authOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60,
+    maxAge: 8 * 60 * 60, // 8 hours
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -87,6 +69,7 @@ export const authOptions = {
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
