@@ -6,11 +6,11 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Users, Calendar, Heart, Shield, LogOut, UserSwitch,
+  Users, Calendar, Heart, Shield, LogOut,
   Target, BookOpen, ChevronRight, Home, Church,
   Menu, X, Library, Bell, Star,
   BarChart3, Image, Clock, Globe, Power,
-  UserCircle, Settings
+  UserCircle, Settings, SwitchCamera
 } from "lucide-react";
 import Logo from "./Logo";
 
@@ -152,7 +152,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             </button>
           </div>
           
-          {/* User Menu Dropdown */}
           <AnimatePresence>
             {showUserMenu && (
               <motion.div
@@ -166,7 +165,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                     onClick={handleSwitchUser}
                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                   >
-                    <UserSwitch size={16} />
+                    <SwitchCamera size={16} />
                     <span>Switch User</span>
                   </button>
                   <button
@@ -216,7 +215,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         })}
       </nav>
       
-      {/* Sign Out Button at Bottom (visible on mobile) */}
       <div className="p-5 border-t border-gray-200 bg-gray-50 lg:hidden">
         <button 
           onClick={handleSignOut} 
@@ -233,7 +231,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
-      {/* Mobile Top Bar */}
       <div className={`lg:hidden fixed top-0 left-0 right-0 z-40 px-4 py-3 flex justify-between items-center transition-all ${
         scrolled ? 'bg-white/80 backdrop-blur-lg shadow-sm' : 'bg-transparent'
       }`}>
@@ -251,12 +248,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         </div>
       </div>
       
-      {/* Desktop Sidebar */}
       <aside className="fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm z-30 hidden lg:flex">
         <SidebarContent />
       </aside>
       
-      {/* Mobile Drawer */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
