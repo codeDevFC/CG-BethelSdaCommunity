@@ -1,35 +1,47 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FALLBACK_GROUPS } from "@/lib/constants";
 
 export default function PortalPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
+    console.log("Portal page - Status:", status);
+    console.log("Portal page - Session:", session);
+    
     if (status === "loading") return;
     
     if (!session) {
+      console.log("No session, redirecting to login");
       router.push("/login");
       return;
     }
 
-    const userRole = session.user?.role;
+    if (isRedirecting) return;
+    setIsRedirecting(true);
+
+    const userRole = session.user?.role?.toUpperCase();
     const userGroupId = session.user?.groupId;
 
-    // Redirect to appropriate page based on role
+    console.log("User Role:", userRole);
+    console.log("User Group ID:", userGroupId);
+
+    // Redirect based on role
     if (userRole === "ADMIN" || userRole === "PASTOR") {
+      console.log("Redirecting to /groups");
       router.push("/groups");
-    } else if (userGroupId && userGroupId !== "all") {
+    } else if (userGroupId && userGroupId !== "all" && userGroupId !== "undefined") {
+      console.log(`Redirecting to /group/${userGroupId}`);
       router.push(`/group/${userGroupId}`);
     } else {
-      // If member has no group, show group selection
+      console.log("No group assigned, redirecting to login");
       router.push("/login");
     }
-  }, [session, status, router]);
+  }, [session, status, router, isRedirecting]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
