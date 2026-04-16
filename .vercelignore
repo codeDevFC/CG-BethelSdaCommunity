@@ -1,0 +1,16 @@
+.git
+.github
+.vscode
+node_modules/.cache
+.next/cache
+README.md
+*.pdf
+*.txt
+AGENTS.md
+CLAUDE.md
+ALL_PROJECT_CODE.*
+BETHEL_FULL_BACKUP.*
+setup-*.sh
+run-all-upgrades.sh
+prisma/seed.ts
+prisma/seed.js

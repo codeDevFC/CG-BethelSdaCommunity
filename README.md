@@ -1,0 +1,1 @@
+# CG-Bethel-Sda-Community

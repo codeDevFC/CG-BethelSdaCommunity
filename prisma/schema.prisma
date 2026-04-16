@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("MEMBER")
+  groupId      String?
+  group        Group?   @relation(fields: [groupId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lastLogin    DateTime?
+  isActive     Boolean  @default(true)
+  
+  studyProgress StudyProgress[]
+}
+
+model Group {
+  id           String   @id @default(cuid())
+  name         String
+  meetingDay   String
+  meetingTime  String
+  location     String?
+  description  String?
+  healthScore  Int      @default(70)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  members      Member[]
+  leaders      User[]
+  prayers      Prayer[]
+  missionStats MissionStats?
+}
+
+model Member {
+  id            Int      @id @default(autoincrement())
+  groupId       String
+  group         Group    @relation(fields: [groupId], references: [id])
+  name          String
+  status        String   @default("MEMBER")
+  journeyStage  String   @default("member")
+  phone         String?
+  email         String?
+  notes         String?
+  joinedDate    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Prayer {
+  id           Int      @id @default(autoincrement())
+  groupId      String
+  group        Group    @relation(fields: [groupId], references: [id])
+  memberName   String
+  request      String
+  status       String   @default("ACTIVE")
+  isPrivate    Boolean  @default(false)
+  category     String?
+  urgency      String   @default("medium")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  answeredAt   DateTime?
+  testimony    String?
+}
+
+model StudyProgress {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  groupId    String
+  seriesId   String
+  lessonId   Int
+  completed  Boolean  @default(false)
+  completedAt DateTime?
+  notes      String?
+  updatedAt  DateTime @updatedAt
+  
+  @@unique([userId, seriesId, lessonId])
+}
+
+model MissionStats {
+  id              Int      @id @default(autoincrement())
+  groupId         String   @unique
+  group           Group    @relation(fields: [groupId], references: [id])
+  soulWinning     Int      @default(0)
+  baptisms        Int      @default(0)
+  outreachEvents  Int      @default(0)
+  prayerRequests  Int      @default(0)
+  answeredPrayers Int      @default(0)
+  updatedAt       DateTime @updatedAt
+}

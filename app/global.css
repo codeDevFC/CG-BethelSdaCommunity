@@ -1,0 +1,586 @@
+@import "tailwindcss";
+
+:root {
+  /* Logo & Brand Palette */
+  --logo-slate: #547189;
+  --primary-navy: #012169;
+  --primary-red: #C8102E;
+  --primary-green: #8DC63F;
+  
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px 0 rgba(84, 113, 137, 0.12);
+  
+  /* System Colors */
+  --background: #fdfdfd;
+  --foreground: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-slate-logo: var(--logo-slate);
+  --color-navy-brand: var(--primary-navy);
+  --color-red-brand: var(--primary-red);
+}
+
+/* 1. Base Intentionality & Background */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* An intentional radial gradient background using the logo's slate blue */
+  background: 
+    radial-gradient(at 0% 0%, rgba(84, 113, 137, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(1, 33, 105, 0.05) 0px, transparent 50%),
+    var(--background);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* 2. Typography (Georgia for that 'Traditional yet Intentional' feel) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Georgia', serif !important;
+  letter-spacing: -0.01em;
+  font-weight: 900;
+  color: var(--primary-navy);
+}
+
+h1 { font-size: clamp(2rem, 6vw, 4rem); }
+h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+
+/* 3. The Glass System */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 28px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glass Card - Used for group items and stats */
+.glass-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+@media (hover: hover) {
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.7);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(84, 113, 137, 0.1);
+  }
+}
+
+/* 4. Navigation & Sidebar Overrides */
+aside {
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-right: 1px solid var(--glass-border) !important;
+}
+
+/* 5. Mobile Optimizations (Touch Targets) */
+@media (max-width: 768px) {
+  button, a, [role="button"], input, select, textarea {
+    min-height: 48px; /* Slightly larger for extra intentionality */
+  }
+  
+  .glass-panel {
+    border-radius: 24px;
+  }
+}
+
+/* 6. Form Elements (Delicate & Clear) */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(84, 113, 137, 0.15) !important;
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  font-size: 16px !important; /* Prevent iOS zoom */
+}
+
+input:focus {
+  outline: none !important;
+  border-color: var(--logo-slate) !important;
+  background: white !important;
+  box-shadow: 0 0 0 4px rgba(84, 113, 137, 0.1) !important;
+}
+
+/* 7. Buttons (Logo Slate with soft glow) */
+.btn-intentional {
+  background: var(--logo-slate);
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 18px;
+  box-shadow: 0 4px 12px rgba(84, 113, 137, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn-intentional:active {
+  transform: scale(0.96);
+}
+
+/* 8. Modern Utilities */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--logo-slate) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 9. Loading & Performance */
+.spinner {
+  border: 3px solid rgba(84, 113, 137, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-red);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 10. Table Styling (Careful Data Presentation) */
+table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+tr.glass-row {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+tr.glass-row:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.01);
+}
+
+
+
+-----------------------
+/*Another version*/
+@import "tailwindcss";
+
+:root {
+  /* Logo & Brand Palette */
+  --logo-slate: #547189;
+  --primary-navy: #012169;
+  --primary-red: #C8102E;
+  --primary-green: #8DC63F;
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(84, 113, 137, 0.15);
+  /* System Colors */
+  --background: #f8fafc;
+  --foreground: #1e293b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-slate-logo: var(--logo-slate);
+  --color-navy-brand: var(--primary-navy);
+  --color-red-brand: var(--primary-red);
+}
+
+/* 1. Base Intentionality & Background */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  font-size: 16px;
+}
+
+@media (max-width: 640px) {
+  html { 
+    font-size: 14px; 
+  }
+}
+
+body {
+  background: 
+    radial-gradient(at 0% 0%, rgba(84, 113, 137, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(84, 113, 137, 0.08) 0px, transparent 50%),
+    var(--background);
+  background-attachment: fixed;
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* 2. Typography - FIXED: Better contrast for headers */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Georgia', serif !important;
+  letter-spacing: -0.01em;
+  font-weight: 900;
+  color: #1a1a2e; /* Dark charcoal instead of navy for better contrast */
+}
+
+/* Light backgrounds - ensure dark text */
+.bg-white h1, .bg-white h2, .bg-white h3, 
+.bg-gray-50 h1, .bg-gray-50 h2, .bg-gray-50 h3,
+.glass-card h1, .glass-card h2, .glass-card h3 {
+  color: #1a1a2e !important;
+}
+
+/* Dark backgrounds - ensure white/light text */
+.bg-gradient-to-r h1, .bg-gradient-to-r h2, .bg-gradient-to-r h3,
+.bg-gray-900 h1, .bg-gray-900 h2, .bg-gray-900 h3,
+.bg-navy-brand h1, .bg-navy-brand h2, .bg-navy-brand h3 {
+  color: white !important;
+}
+
+h1 { 
+  font-size: clamp(2rem, 6vw, 4rem); 
+}
+
+/* 3. The Glass System */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 28px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.9); /* Increased opacity for better readability */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+/* 4. Navigation & Sidebar Glass */
+aside {
+  background: rgba(255, 255, 255, 0.95) !important; /* Much lighter for readability */
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-right: 1px solid var(--glass-border) !important;
+}
+
+/* Sidebar text colors */
+aside a, aside span, aside p {
+  color: #1e293b !important;
+}
+
+/* 5. Mobile & Touch Targets */
+@media (max-width: 768px) {
+  button, a, [role="button"], input, select, textarea {
+    min-height: 46px;
+  }
+  
+  button:active, a:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 6. Form Elements */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(84, 113, 137, 0.3) !important;
+  border-radius: 14px !important;
+  font-size: 16px !important;
+  color: #1e293b !important;
+}
+
+input:focus {
+  outline: none !important;
+  border-color: var(--primary-navy) !important;
+  background: white !important;
+  box-shadow: 0 0 0 4px rgba(1, 33, 105, 0.1) !important;
+}
+
+/* 7. BUTTONS - Restored to Primary Navy (#012169) */
+.btn-intentional,
+button:not(.glass-card):not(.p-2):not(.p-1):not(.p-3):not(.p-4) {
+  background-color: var(--primary-navy) !important;
+  color: white !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(1, 33, 105, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-intentional:hover,
+button:not(.glass-card):not(.p-2):not(.p-1):not(.p-3):not(.p-4):hover {
+  background-color: #0a2a80 !important;
+  box-shadow: 0 6px 20px rgba(1, 33, 105, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 8. Utilities */
+.no-scrollbar::-webkit-scrollbar { 
+  display: none; 
+}
+
+.no-scrollbar { 
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--logo-slate) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 9. Loading Spinner */
+.spinner {
+  border: 3px solid rgba(84, 113, 137, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-red);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { 
+  to { 
+    transform: rotate(360deg); 
+  } 
+}
+
+/* 10. Table Styling */
+table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+tr.glass-row {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+/* 11. ASCII Art / Diagram Styling - Prevents overflow on mobile */
+.diagram,
+pre:has(> code.diagram),
+pre:has(> .diagram-code),
+.content-section pre {
+  font-family: 'Courier New', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: clamp(10px, 3vw, 14px);
+  line-height: 1.4;
+  white-space: pre;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(84, 113, 137, 0.2);
+  margin: 1rem 0;
+  max-width: 100%;
+  word-break: keep-all;
+  display: block;
+  color: #1e293b; /* Dark text for diagrams */
+}
+
+/* Diagram scroll container for better UX */
+.diagram-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  scrollbar-width: thin;
+}
+
+.diagram-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.diagram-wrapper::-webkit-scrollbar-track {
+  background: rgba(84, 113, 137, 0.1);
+  border-radius: 3px;
+}
+
+.diagram-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(84, 113, 137, 0.4);
+  border-radius: 3px;
+}
+
+.diagram-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(84, 113, 137, 0.6);
+}
+
+/* Responsive diagram adjustments */
+@media (max-width: 768px) {
+  .diagram,
+  .content-section pre {
+    font-size: 8px;
+    padding: 0.75rem;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 480px) {
+  .diagram,
+  .content-section pre {
+    font-size: 6px;
+    padding: 0.5rem;
+  }
+}
+
+/* 12. Sanctuary Diagram Specific Styles */
+.sanctuary-diagram,
+.sanctuary-content pre {
+  background: #f5f0e8;
+  font-family: 'Courier New', monospace;
+  white-space: pre;
+  overflow-x: auto;
+  display: block;
+  color: #2d2d2d;
+}
+
+/* 13. Better handling of long lines in content */
+.prose pre,
+.prose .diagram {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Ensure text doesn't overflow on small screens */
+p, li, .text-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  color: #334155; /* Slate color for better readability */
+}
+
+/* 14. Table responsiveness */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1rem 0;
+}
+
+.table-responsive table {
+  min-width: 500px;
+}
+
+/* 15. Box diagram styling for sanctuary illustrations */
+.box-diagram {
+  font-family: monospace;
+  white-space: pre;
+  overflow-x: auto;
+  background: #f8f8f8;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: clamp(10px, 2.5vw, 14px);
+  line-height: 1.5;
+  border: 1px solid #e0e0e0;
+  color: #2d2d2d;
+}
+
+/* 16. Dark mode adjustments for diagrams */
+@media (prefers-color-scheme: dark) {
+  .diagram,
+  .content-section pre {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+  }
+  
+  .box-diagram {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #e2e8f0;
+  }
+  
+  .sanctuary-diagram,
+  .sanctuary-content pre {
+    background: #2a2418;
+    color: #f0e6d0;
+  }
+}
+
+/* 17. FIXED: Collapsible section headers - Better contrast */
+button h2, 
+button .text-gray-900,
+[class*="font-black"] {
+  color: #1a1a2e !important;
+}
+
+/* Section headers in study content */
+.bg-white .font-black,
+.glass-card .font-black {
+  color: #1a1a2e !important;
+}
+
+/* Tab buttons - ensure proper contrast */
+.tab-button,
+[role="tab"] {
+  color: #64748b !important;
+}
+
+.tab-button-active,
+[role="tab"][aria-selected="true"] {
+  color: #1e293b !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* 18. Link colors for better visibility */
+a:not(.btn-intentional):not([class*="bg-"]) {
+  color: #547189;
+}
+
+a:not(.btn-intentional):not([class*="bg-"]):hover {
+  color: #012169;
+}
+
+/* 19. List items in study content */
+ul li, ol li {
+  color: #334155;
+}
+
+/* 20. Scripture references - make them stand out */
+.scripture-ref,
+[class*="font-mono"] {
+  color: #1e40af !important;
+  font-weight: 500;
+}
