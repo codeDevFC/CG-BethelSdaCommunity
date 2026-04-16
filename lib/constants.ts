@@ -11,6 +11,7 @@ export const FALLBACK_GROUPS = [
   { id: "10", name: "Bethel CareGroup-10", meetingDay: "Wednesday", meetingTime: "19:00", location: "Halesowen", memberCount: 14, healthScore: 90 },
 ];
 
+// Simple users WITHOUT bcrypt - using plain text passwords for now
 export const FALLBACK_USERS = [
   {
     id: "admin-1",
@@ -19,7 +20,7 @@ export const FALLBACK_USERS = [
     name: "System Administrator",
     role: "ADMIN",
     groupId: "all",
-    passwordHash: "$2b$10$dHax7c7ASmKCVL8Xcv6fYeGl/fnlgxpr5w5WyjJiMcBVg0bSigB4G",
+    password: "admin@Bwcg777",  // Plain text password
     isActive: true,
   },
   {
@@ -29,7 +30,7 @@ export const FALLBACK_USERS = [
     name: "Pastor Dan Majaducon",
     role: "PASTOR",
     groupId: "all",
-    passwordHash: "$2b$10$HVLqLbIFKdLLBogflCwVrOjKgzQlX5sW7x8y9z0a1b2c3d4e5f6g7h",
+    password: "PastorDan@BWcg777",
     isActive: true,
   },
   {
@@ -39,7 +40,7 @@ export const FALLBACK_USERS = [
     name: "Pastor Thando Mlalazi",
     role: "PASTOR",
     groupId: "all",
-    passwordHash: "$2b$10$M0lazia1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z",
+    password: "PastorTM@BWcg777",
     isActive: true,
   },
   {
@@ -49,7 +50,7 @@ export const FALLBACK_USERS = [
     name: "Coordinator CG-01",
     role: "COORDINATOR",
     groupId: "1",
-    passwordHash: "$2b$10$JQ.nx0AQ2U5G3G1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v",
+    password: "CG-coord-01@BWcg04",
     isActive: true,
   },
   {
@@ -59,7 +60,7 @@ export const FALLBACK_USERS = [
     name: "Coordinator CG-02",
     role: "COORDINATOR",
     groupId: "2",
-    passwordHash: "$2b$10$JQ.nx0AQ2U5G3G1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v",
+    password: "CG-coord-02@BWcg04",
     isActive: true,
   },
   {
@@ -69,7 +70,7 @@ export const FALLBACK_USERS = [
     name: "Coordinator CG-03",
     role: "COORDINATOR",
     groupId: "3",
-    passwordHash: "$2b$10$8AXf1kS7K3ixcSV1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v",
+    password: "CG-coord-03@BWcg04",
     isActive: true,
   },
   {
@@ -79,7 +80,7 @@ export const FALLBACK_USERS = [
     name: "Care Group Member",
     role: "MEMBER",
     groupId: "1",
-    passwordHash: "$2b$10$S.7XHb1NFCAtaO1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v",
+    password: "Member@BWcg@member",
     isActive: true,
   },
 ];
