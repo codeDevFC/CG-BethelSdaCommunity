@@ -16,24 +16,20 @@ export const authOptions = {
           throw new Error("Please enter your username and password");
         }
 
-        // 1. Find user in Neon Database
         const user = await prisma.user.findUnique({
           where: { username: credentials.username },
         });
 
-        // 2. Validate User
         if (!user || !user.isActive) {
           throw new Error("User not found or inactive");
         }
 
-        // 3. Check Password (admin@Bwcg777)
         const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
         
         if (!isValid) {
           throw new Error("Invalid password");
         }
 
-        // 4. Return user object to session
         return {
           id: user.id,
           name: user.name,
@@ -47,7 +43,7 @@ export const authOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60, // 8 hours
+    maxAge: 8 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -72,6 +68,7 @@ export const authOptions = {
     error: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
 };
 
 const handler = NextAuth(authOptions);
