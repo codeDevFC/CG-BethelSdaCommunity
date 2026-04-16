@@ -1,3 +1,11 @@
+#!/bin/bash
+
+echo "🔧 FIXING PERMISSIONS FOR ALL ROLES"
+echo "===================================="
+echo ""
+
+# Fix DashboardShell to properly read role from session
+cat > components/DashboardShell.tsx << 'DASHBOARD'
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -295,3 +303,31 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     </div>
   );
 }
+DASHBOARD
+
+echo "✅ DashboardShell updated"
+
+# Clear cache and rebuild
+echo "🗑️ Clearing Next.js cache..."
+rm -rf .next
+
+echo ""
+echo "=========================================="
+echo "✅ FIX COMPLETE!"
+echo "=========================================="
+echo ""
+echo "🚀 Run: npm run dev"
+echo "📱 Use Incognito/Private window"
+echo ""
+echo "📋 TEST CREDENTIALS:"
+echo "   ┌─────────────────┬──────────────────────────┬─────────────────────┐"
+echo "   │ Role            │ Username                 │ Password            │"
+echo "   ├─────────────────┼──────────────────────────┼─────────────────────┤"
+echo "   │ Admin (Full)    │ admin                    │ admin@Bwcg777       │"
+echo "   │ Pastor (Full)   │ PastorDan                │ PastorDan@BWcg777   │"
+echo "   │ Coordinator     │ CG-coord-01              │ CG-coord-01@BWcg04  │"
+echo "   │ Member          │ Member@BWcg              │ Member@BWcg@member  │"
+echo "   └─────────────────┴──────────────────────────┴─────────────────────┘"
+echo ""
+echo "=========================================="
+
