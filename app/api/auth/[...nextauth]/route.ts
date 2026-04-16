@@ -1,52 +1,21 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 
-// 1. Define high-level User Type
-interface AppUser {
-  id: string;
-  username: string;
-  email: string;
-  name: string;
-  role: string;
-  groupId: string;
-  passwordHash: string;
-  isActive: boolean;
-}
-
-// 2. Production Fallback Users (Used if cloud DB is unreachable)
-const FALLBACK_USERS: AppUser[] = [
-  {
-    id: "1",
-    username: "admin",
-    email: "admin@bethelwillenhall.org.uk",
-    name: "System Administrator",
-    role: "ADMIN",
-    groupId: "all",
-    passwordHash: "$2b$10$dHax7c7ASmKCVL8Xcv6fYeGl/fnlgxpr5w5WyjJiMcBVg0bSigB4G", // admin@Bwcg777
-    isActive: true,
-  },
-  {
-    id: "2",
-    username: "PastorDan",
-    email: "dan.majaducon@bethelwillenhall.org.uk",
-    name: "Pastor Dan Majaducon",
-    role: "PASTOR",
-    groupId: "all",
-    passwordHash: "$2b$10$HVLqLbIFKdLLBogflCwVrOjKgzQlX5sW7x8y9z0a1b2c3d4e5f6g7h",
-    isActive: true,
-  },
-  {
-    id: "4",
-    username: "CG-coord-01",
-    email: "coordinator1@bethelwillenhall.org.uk",
-    name: "Coordinator CG-01",
-    role: "COORDINATOR",
-    groupId: "cmo0lam4w0007e519yfnml2z1",
-    passwordHash: "$2b$10$JQ.nx0AQ2U5G3G1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v",
-    isActive: true,
-  }
+const USERS = [
+  { id: "1", username: "admin", email: "admin@bethelwillenhall.org.uk", name: "System Administrator", role: "ADMIN", groupId: "all", isActive: true },
+  { id: "2", username: "PastorDan", email: "dan.majaducon@bethelwillenhall.org.uk", name: "Pastor Dan Majaducon", role: "PASTOR", groupId: "all", isActive: true },
+  { id: "3", username: "PastorTM", email: "thando.mlalazi@bethelwillenhall.org.uk", name: "Pastor Thando Mlalazi", role: "PASTOR", groupId: "all", isActive: true },
+  { id: "4", username: "CG-coord-01", email: "coordinator1@bethelwillenhall.org.uk", name: "Coordinator CG-01", role: "COORDINATOR", groupId: "1", isActive: true },
+  { id: "5", username: "Member@BWcg", email: "member@bethelwillenhall.org.uk", name: "Care Group Member", role: "MEMBER", groupId: "1", isActive: true },
 ];
+
+const getPassword = (username: string, role: string): string => {
+  const month = String(new Date().getMonth() + 1).padStart(2, '0');
+  if (role === 'ADMIN') return 'admin@Bwcg777';
+  if (role === 'PASTOR') return `${username}@BWcg777`;
+  if (role === 'COORDINATOR') return `${username}@BWcg${month}`;
+  return `${username}@member`;
+};
 
 export const authOptions = {
   providers: [
@@ -54,35 +23,22 @@ export const authOptions = {
       name: "credentials",
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
-          throw new Error("Please enter your username and password");
+          throw new Error("Please enter username and password");
         }
 
-        // 3. Search for user in fallback list (can be swapped for Prisma later)
-        const user = FALLBACK_USERS.find(
-          u => u.username.toLowerCase() === credentials.username.toLowerCase()
-        );
-
+        const user = USERS.find(u => u.username.toLowerCase() === credentials.username.toLowerCase());
+        
         if (!user) {
           throw new Error("User not found");
         }
 
-        if (!user.isActive) {
-          throw new Error("Account is inactive");
-        }
-
-        // 4. Top-Notch Password Verification
-        // First check against the Bcrypt hash
-        const isHashValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        const expectedPassword = getPassword(user.username, user.role);
         
-        // Second check for the hardcoded admin password (safety net)
-        const isDirectAdmin = credentials.username === "admin" && credentials.password === "admin@Bwcg777";
-        const isTestAdmin = credentials.username === "admin" && credentials.password === "admin123";
-
-        if (!isHashValid && !isDirectAdmin && !isTestAdmin) {
+        if (credentials.password !== expectedPassword) {
           throw new Error("Invalid password");
         }
 
@@ -98,11 +54,11 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: "jwt" as const,
-    maxAge: 8 * 60 * 60, // 8 hours
+    strategy: "jwt",
+    maxAge: 8 * 60 * 60,
   },
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
         token.groupId = user.groupId;
@@ -111,12 +67,12 @@ export const authOptions = {
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role as string;
-        session.user.groupId = token.groupId as string;
-        session.user.id = token.id as string;
-        session.user.username = token.username as string;
+        session.user.role = token.role;
+        session.user.groupId = token.groupId;
+        session.user.id = token.id;
+        session.user.username = token.username;
       }
       return session;
     },
@@ -125,7 +81,7 @@ export const authOptions = {
     signIn: "/login",
     error: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "bethel-secret-2026",
   trustHost: true,
 };
 

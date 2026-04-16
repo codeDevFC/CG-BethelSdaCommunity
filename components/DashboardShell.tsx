@@ -24,7 +24,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const [scrolled, setScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  
+
   const groupId = (params?.groupId as string) || session?.user?.groupId || "1";
   const userRole = session?.user?.role || "member";
   const userName = session?.user?.name || "User";
@@ -53,6 +53,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   };
 
   const handleSwitchUser = async () => {
+    // Clear local storage and sign out
+    localStorage.removeItem("bethel_auth_user");
+    localStorage.removeItem("selected_group");
     await signOut({ callbackUrl: '/login' });
   };
 
@@ -131,7 +134,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           <Logo className="h-14 w-auto" />
         </Link>
       </div>
-      
+
       {session?.user && (
         <div className="px-5 py-4 border-b border-gray-200 relative">
           <div className="flex items-center justify-between">
@@ -151,7 +154,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <UserCircle size={20} className="text-gray-500" />
             </button>
           </div>
-          
+
           <AnimatePresence>
             {showUserMenu && (
               <motion.div
@@ -181,7 +184,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </AnimatePresence>
         </div>
       )}
-      
+
       <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto no-scrollbar">
         {navSections.map((section) => {
           const visibleItems = section.items.filter(item => hasPermission(item.roles));
@@ -214,7 +217,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           );
         })}
       </nav>
-      
+
       <div className="p-5 border-t border-gray-200 bg-gray-50 lg:hidden">
         <button 
           onClick={handleSignOut} 
@@ -223,7 +226,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           <LogOut size={14} /> SIGN OUT
         </button>
         <p className="text-[7px] font-black text-gray-400 text-center mt-3 uppercase tracking-widest">
-          Bethel Willenhall • v3.0
+          Bethel Willenhall ? v3.0
         </p>
       </div>
     </>
@@ -247,11 +250,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </button>
         </div>
       </div>
-      
+
       <aside className="fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm z-30 hidden lg:flex">
         <SidebarContent />
       </aside>
-      
+
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -274,7 +277,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           </>
         )}
       </AnimatePresence>
-      
+
       <main className={`flex-1 transition-all duration-300 ${isMobile ? 'pt-20' : 'lg:ml-72'} px-4 py-6 lg:px-12 lg:py-10`}>
         <div className="max-w-7xl mx-auto">
           {children}
