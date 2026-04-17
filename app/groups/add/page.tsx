@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -53,11 +54,10 @@ export default function AddGroupPage() {
       toast.error("Please enter a group name");
       return;
     }
-
     setSubmitting(true);
     
     const allGroups = loadGroups();
-    // Find the next available ID (1-10)
+    // Find the next available ID
     let newId = "1";
     for (let i = 1; i <= 10; i++) {
       if (!allGroups[i.toString()]) {
@@ -85,8 +85,6 @@ export default function AddGroupPage() {
     };
     
     saveGroups(allGroups);
-    refreshUsers();
-    
     toast.success(`Care Group "${formData.name}" created successfully`);
     router.push(`/groups`);
     setSubmitting(false);
@@ -112,7 +110,7 @@ export default function AddGroupPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="glass-panel overflow-hidden">
+          <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="p-6 space-y-5">
               <div>
                 <label className="block text-[10px] font-black text-gray-400 uppercase mb-2">Group Name *</label>
@@ -122,12 +120,11 @@ export default function AddGroupPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g., Bethel CareGroup-01"
-                    className="w-full pl-10 pr-4 py-3 glass-card border focus:border-[#547189] outline-none"
+                    placeholder="e.g., Bethel CareGroup-08"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                     required
                   />
                 </div>
-                <p className="text-[9px] text-gray-400 mt-1">Format: Bethel CareGroup-01 to Bethel CareGroup-10</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -136,7 +133,7 @@ export default function AddGroupPage() {
                   <select
                     value={formData.meetingDay}
                     onChange={(e) => setFormData({ ...formData, meetingDay: e.target.value })}
-                    className="w-full p-3 glass-card border focus:border-[#547189] outline-none"
+                    className="w-full p-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   >
                     {meetingDays.map(day => <option key={day} value={day}>{day}</option>)}
                   </select>
@@ -147,7 +144,7 @@ export default function AddGroupPage() {
                     type="time"
                     value={formData.meetingTime}
                     onChange={(e) => setFormData({ ...formData, meetingTime: e.target.value })}
-                    className="w-full p-3 glass-card border focus:border-[#547189] outline-none"
+                    className="w-full p-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   />
                 </div>
               </div>
@@ -161,7 +158,7 @@ export default function AddGroupPage() {
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="e.g., Willenhall Town Centre"
-                    className="w-full pl-10 pr-4 py-3 glass-card border focus:border-[#547189] outline-none"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   />
                 </div>
               </div>
@@ -174,7 +171,7 @@ export default function AddGroupPage() {
                     value={formData.leader}
                     onChange={(e) => setFormData({ ...formData, leader: e.target.value })}
                     placeholder="Leader name"
-                    className="w-full p-3 glass-card border focus:border-[#547189] outline-none"
+                    className="w-full p-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   />
                 </div>
                 <div>
@@ -184,7 +181,7 @@ export default function AddGroupPage() {
                     value={formData.coLeader}
                     onChange={(e) => setFormData({ ...formData, coLeader: e.target.value })}
                     placeholder="Co-leader name"
-                    className="w-full p-3 glass-card border focus:border-[#547189] outline-none"
+                    className="w-full p-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   />
                 </div>
               </div>
@@ -195,13 +192,13 @@ export default function AddGroupPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Brief description of the group..."
-                  className="w-full p-3 glass-card border focus:border-[#547189] outline-none"
+                  className="w-full p-3 bg-gray-50 rounded-xl border focus:border-[#547189] outline-none"
                   rows={3}
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 p-6 bg-white/30 border-t border-white/30">
+            <div className="flex justify-end gap-3 p-6 bg-gray-50 border-t border-gray-100">
               <Link href="/groups" className="px-6 py-2.5 bg-gray-200 rounded-xl font-black text-[10px] uppercase hover:bg-gray-300 transition">
                 Cancel
               </Link>

@@ -1,10 +1,11 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
 import { useAuth } from "@/contexts/AuthContext";
 import { loadGroups, saveGroups, updateGroup, getAllGroupsSummary } from "@/lib/groupService";
-import { Plus, Edit2, Save, X, Users, Calendar, Clock, ChevronLeft } from "lucide-react";
+import { Plus, Edit2, Save, X, Users, Calendar, Clock, ChevronLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 
@@ -100,7 +101,9 @@ export default function AdminGroupsPage() {
                       <h3 className="text-2xl font-black">{group.name}</h3>
                       <p className="text-xs text-gray-500">{group.meetingDay}s at {group.meetingTime}</p>
                     </div>
-                    <button onClick={() => handleEditGroup(group)} className="p-2 bg-gray-100 rounded-xl"><Edit2 size={16} /></button>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEditGroup(group)} className="p-2 bg-gray-100 rounded-xl"><Edit2 size={16} /></button>
+                    </div>
                   </div>
                 )}
               </div>

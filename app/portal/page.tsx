@@ -10,13 +10,9 @@ export default function PortalPage() {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    console.log("Portal page - Status:", status);
-    console.log("Portal page - Session:", session);
-    
     if (status === "loading") return;
-    
+
     if (!session) {
-      console.log("No session, redirecting to login");
       router.push("/login");
       return;
     }
@@ -27,18 +23,15 @@ export default function PortalPage() {
     const userRole = session.user?.role?.toUpperCase();
     const userGroupId = session.user?.groupId;
 
-    console.log("User Role:", userRole);
-    console.log("User Group ID:", userGroupId);
+    console.log("Portal redirect - Role:", userRole, "GroupId:", userGroupId);
 
     // Redirect based on role
     if (userRole === "ADMIN" || userRole === "PASTOR") {
-      console.log("Redirecting to /groups");
       router.push("/groups");
     } else if (userGroupId && userGroupId !== "all" && userGroupId !== "undefined") {
-      console.log(`Redirecting to /group/${userGroupId}`);
       router.push(`/group/${userGroupId}`);
     } else {
-      console.log("No group assigned, redirecting to login");
+      // Member without group - show group selection
       router.push("/login");
     }
   }, [session, status, router, isRedirecting]);

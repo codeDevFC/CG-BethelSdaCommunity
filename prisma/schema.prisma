@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -22,57 +22,67 @@ model User {
   isActive     Boolean  @default(true)
   
   studyProgress StudyProgress[]
+  
+  @@index([groupId])
+  @@index([role])
 }
 
 model Group {
-  id           String   @id @default(cuid())
-  name         String
-  meetingDay   String
-  meetingTime  String
-  location     String?
-  description  String?
-  healthScore  Int      @default(70)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  meetingDay  String
+  meetingTime String
+  location    String?
+  description String?
+  healthScore Int      @default(70)
+  memberCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
-  members      Member[]
-  leaders      User[]
-  prayers      Prayer[]
+  users        User[]
   missionStats MissionStats?
-}
-
-model Member {
-  id            Int      @id @default(autoincrement())
-  groupId       String
-  group         Group    @relation(fields: [groupId], references: [id])
-  name          String
-  status        String   @default("MEMBER")
-  journeyStage  String   @default("member")
-  phone         String?
-  email         String?
-  notes         String?
-  joinedDate    DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  prayers      Prayer[]
+  attendances  Attendance[]
+  
+  @@index([name])
 }
 
 model Prayer {
-  id           Int      @id @default(autoincrement())
-  groupId      String
-  group        Group    @relation(fields: [groupId], references: [id])
-  memberName   String
-  request      String
-  status       String   @default("ACTIVE")
-  isPrivate    Boolean  @default(false)
-  category     String?
-  urgency      String   @default("medium")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  answeredAt   DateTime?
-  testimony    String?
+  id          String   @id @default(cuid())
+  groupId     String
+  group       Group    @relation(fields: [groupId], references: [id])
+  memberName  String
+  request     String
+  status      String   @default("ACTIVE")
+  isPrivate   Boolean  @default(false)
+  category    String?
+  urgency     String   @default("medium")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  answeredAt  DateTime?
+  testimony   String?
+  
+  @@index([groupId])
+  @@index([status])
+}
+
+model Attendance {
+  id         String   @id @default(cuid())
+  groupId    String
+  group      Group    @relation(fields: [groupId], references: [id])
+  memberId   String
+  memberName String
+  date       DateTime @default(now())
+  status     String   @default("PRESENT")
+  notes      String?
+  
+  @@unique([groupId, memberId, date])
+  @@index([groupId])
+  @@index([date])
 }
 
 model StudyProgress {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   userId     String
   user       User     @relation(fields: [userId], references: [id])
   groupId    String
@@ -84,16 +94,20 @@ model StudyProgress {
   updatedAt  DateTime @updatedAt
   
   @@unique([userId, seriesId, lessonId])
+  @@index([userId])
+  @@index([groupId])
 }
 
 model MissionStats {
-  id              Int      @id @default(autoincrement())
-  groupId         String   @unique
-  group           Group    @relation(fields: [groupId], references: [id])
-  soulWinning     Int      @default(0)
-  baptisms        Int      @default(0)
-  outreachEvents  Int      @default(0)
-  prayerRequests  Int      @default(0)
-  answeredPrayers Int      @default(0)
-  updatedAt       DateTime @updatedAt
+  id             String   @id @default(cuid())
+  groupId        String   @unique
+  group          Group    @relation(fields: [groupId], references: [id])
+  soulWinning    Int      @default(0)
+  baptisms       Int      @default(0)
+  outreachEvents Int      @default(0)
+  prayerRequests Int      @default(0)
+  answeredPrayers Int     @default(0)
+  updatedAt      DateTime @updatedAt
+  
+  @@index([groupId])
 }
